@@ -18,7 +18,7 @@ public class Emojifier {
 
     private static final double EYE_OPEN_THRESHOLD = 0.4;
     private static final double SMILING_THRESHOLD = 0.25;
-
+    private static final double NEUTRAL_THRESHOLD = 0.09;
     private static final float EMOJI_SCALE_FACTOR = 1f;
 
 
@@ -67,6 +67,12 @@ public class Emojifier {
                         break;
                     case CLOSED_EYE_FROWN:
                         emojiBitmap = BitmapFactory.decodeResource(res, R.drawable.closed_frown);
+                        break;
+                    case NEUTRAL:
+                        emojiBitmap = BitmapFactory.decodeResource(res, R.drawable.neutral);
+                        break;
+                    case EXPRESSIONLESS:
+                        emojiBitmap = BitmapFactory.decodeResource(res, R.drawable.expressionless);
                         break;
 
                 }
@@ -122,7 +128,7 @@ public class Emojifier {
         boolean leftEyeOpen = EYE_OPEN_THRESHOLD <= face.getIsLeftEyeOpenProbability();
         boolean rightEyeOpen = EYE_OPEN_THRESHOLD <= face.getIsRightEyeOpenProbability();
         boolean smiling = SMILING_THRESHOLD <= face.getIsSmilingProbability();
-
+        boolean neutral = NEUTRAL_THRESHOLD <= face.getIsSmilingProbability();
 
         if (smiling) {
             if (!leftEyeOpen && rightEyeOpen) {
@@ -134,7 +140,12 @@ public class Emojifier {
             } else {
                 emoji = Emoji.CLOSED_EYE_SMILE;
             }
-
+        } else if (neutral) {
+            if (leftEyeOpen) {
+                emoji = Emoji.NEUTRAL;
+            } else {
+                emoji = Emoji.EXPRESSIONLESS;
+            }
         } else {
             if (!leftEyeOpen && rightEyeOpen) {
                 emoji = Emoji.LEFT_WINK_FROWN;
@@ -160,7 +171,9 @@ public class Emojifier {
         LEFT_WINK_FROWN,
         RIGHT_WINK_FROWN,
         CLOSED_EYE_SMILE,
-        CLOSED_EYE_FROWN
+        CLOSED_EYE_FROWN,
+        NEUTRAL,
+        EXPRESSIONLESS
     }
 
 }
